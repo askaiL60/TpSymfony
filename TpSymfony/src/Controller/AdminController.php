@@ -1,28 +1,39 @@
 <?php
+
 namespace App\Controller;
 
-use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
 {
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/users', name: 'admin_users')]
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        // Récupère tous les utilisateurs
-        $users = $userRepository->findAll();
+        // Création de la requête Doctrine pour pagination
+        $query = $userRepository->createQueryBuilder('u')
+            ->orderBy('u.id', 'ASC')
+            ->getQuery();
+
+        // Application de la pagination
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Page actuelle
+            10 // Limite par page
+        );
 
         return $this->render('admin/users.html.twig', [
-            'users' => $users,
+            'pagination' => $pagination,
         ]);
     }
 

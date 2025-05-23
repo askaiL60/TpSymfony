@@ -1,34 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Administration des utilisateurs{% endblock %}
+{% block title %}Liste des utilisateurs{% endblock %}
 
-{% block body %}
-<h1>Liste des utilisateurs</h1>
+{% block stylesheets %}
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
 
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Nom</th>
-            <th>Rôles</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.nom }}</td>
-            <td>{{ user.roles|join(', ') }}</td>
-            <td>
-                <a href="{{ path('admin_user_edit', {'id': user.id}) }}">Modifier rôles</a>
-            </td>
-        </tr>
-    {% else %}
-        <tr><td colspan="5">Aucun utilisateur trouvé</td></tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size

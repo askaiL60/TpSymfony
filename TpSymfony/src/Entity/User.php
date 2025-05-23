@@ -3,24 +3,47 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+#[ORM\Table(name: '`user`')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "json")]
-    private array $roles = [];
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 150)]
+    #[ORM\Column(length: 100)]
     private ?string $nom = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $prenom = null;
+
+    #[ORM\Column(type: 'string')]
+    private ?string $password = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    private Collection $roles;
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Preference::class, cascade: ['persist', 'remove'])]
+    private ?Preference $preference = null;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -49,16 +72,80 @@ class User
         return $this;
     }
 
-    public function getRoles(): array
+    public function getPrenom(): ?string
     {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
+        return $this->prenom;
     }
 
-    public function setRoles(array $roles): static
+    public function setPrenom(string $prenom): static
     {
-        $this->roles = $roles;
+        $this->prenom = $prenom;
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Retourne les noms des rôles (ROLE_USER, etc.)
+     */
+    public function getRoles(): array
+    {
+        $roleNames = $this->roles->map(fn(Role $role) => $role->getName())->toArray();
+        $roleNames[] = 'ROLE_USER'; // rôle de base
+        return array_unique($roleNames);
+    }
+
+    public function getRoleEntities(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): static
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+        return $this;
+    }
+
+    public function removeRole(Role $role): static
+    {
+        $this->roles->removeElement($role);
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Efface les données sensibles si nécessaire
+    }
+
+    public function getPreference(): ?Preference
+    {
+        return $this->preference;
+    }
+
+    public function setPreference(?Preference $preference): static
+    {
+        $this->preference = $preference;
         return $this;
     }
 }
