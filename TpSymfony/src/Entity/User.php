@@ -13,8 +13,8 @@ class User
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 150)]
-    private ?string $aslan = null;
+    #[ORM\Column(type: "json")]
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -27,18 +27,6 @@ class User
         return $this->id;
     }
 
-    public function getAslan(): ?string
-    {
-        return $this->aslan;
-    }
-
-    public function setAslan(string $aslan): static
-    {
-        $this->aslan = $aslan;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -47,7 +35,6 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -59,7 +46,19 @@ class User
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+        return $this;
+    }
 
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
         return $this;
     }
 }
