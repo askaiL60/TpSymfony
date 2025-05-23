@@ -6,41 +6,97 @@
     <style>
         .container {
             max-width: 1000px;
-            margin: 40px auto;
+            margin: 50px auto;
             padding: 20px;
-            font-family: Arial, sans-serif;
         }
 
         h2 {
             text-align: center;
-            color: #333;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            background-color: #fff;
         }
 
         th, td {
             border: 1px solid #ccc;
-            padding: 8px 10px;
+            padding: 10px;
             text-align: center;
+            font-size: 14px;
         }
 
         th {
-            background-color: #f2f2f2;
-            color: #333;
+            background-color: #f5f5f5;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .btn {
-            background-color: #007bff;
-            color: #fff;
-            padding: 5px 12px;
+        .btn-edit {
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
             text-decoration: none;
             border-radius: 4px;
-            font-size
+            font-size: 13px;
+        }
+
+        .btn-edit:hover {
+            background-color: #2980b9;
+        }
+
+        .no-users {
+            color: #888;
+            font-style: italic;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Liste des utilisateurs</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Mot de passe (hashé)</th>
+                    <th>Date de création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pagination %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.nom }}</td>
+                        <td>{{ user.prenom }}</td>
+                        <td style="max-width: 180px; overflow-wrap: break-word;">{{ user.password }}</td>
+                        <td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'Non défini' }}</td>
+                        <td>
+                            <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn-edit">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="no-users">Aucun utilisateur trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+{% endblock %}
