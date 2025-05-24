@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les préférences{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Modifier les préférences de {{ user.email }}</h2>
+
+    {{ form_start(form) }}
+        {{ form_row(form.theme) }}
+        {{ form_row(form.notificationsEnabled) }}
+        <button class="btn btn-success mt-3">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_users') }}" class="btn btn-secondary mt-3">Retour</a>
+</div>
+{% endblock %}

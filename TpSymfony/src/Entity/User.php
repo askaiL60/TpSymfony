@@ -99,16 +99,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->createdAt;
     }
 
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
     /**
-     * Retourne les noms des rôles (ROLE_USER, etc.)
+     * Retourne un tableau de chaînes avec les noms des rôles.
      */
     public function getRoles(): array
     {
         $roleNames = $this->roles->map(fn(Role $role) => $role->getName())->toArray();
-        $roleNames[] = 'ROLE_USER'; // rôle de base
+        $roleNames[] = 'ROLE_USER'; // rôle par défaut
         return array_unique($roleNames);
     }
 
+    /**
+     * Retourne la collection d'entités Role.
+     */
     public function getRoleEntities(): Collection
     {
         return $this->roles;
@@ -130,12 +139,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->email;
+        return (string) $this->email;
     }
 
     public function eraseCredentials(): void
     {
-        // Efface les données sensibles si nécessaire
+        // Efface les données sensibles si nécessaires (ex: mot de passe en clair temporaire)
     }
 
     public function getPreference(): ?Preference

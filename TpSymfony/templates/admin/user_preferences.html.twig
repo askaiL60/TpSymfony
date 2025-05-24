@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Préférences de l’utilisateur{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Préférences de {{ user.email }}</h2>
+
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Thème :</strong> {{ preferences.theme }}</li>
+        <li class="list-group-item"><strong>Notifications activées :</strong> {{ preferences.notificationsEnabled ? 'Oui' : 'Non' }}</li>
+    </ul>
+
+    <a href="{{ path('admin_users') }}" class="btn btn-secondary mt-3">Retour</a>
+{% endblock %}

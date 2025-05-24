@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l’utilisateur{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Détails de l'utilisateur</h2>
+
+    <ul class="list-group">
+        <li class="list-group-item"><strong>ID :</strong> {{ user.id }}</li>
+        <li class="list-group-item"><strong>Email :</strong> {{ user.email }}</li>
+        <li class="list-group-item"><strong>Rôles :</strong> {{ user.roles|join(', ') }}</li>
+    </ul>
+
+    <a href="{{ path('admin_users') }}" class="btn btn-secondary mt-3">Retour</a>
+{% endblock %}
